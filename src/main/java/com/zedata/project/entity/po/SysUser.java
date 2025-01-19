@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -21,6 +22,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@TableName("sys_user")
 @ApiModel(value = "SysUser对象", description = "")
 public class SysUser implements Serializable {
 
@@ -37,13 +39,10 @@ public class SysUser implements Serializable {
 
     private String roleList;
 
-    private String journalName;
-
     private Date createDate;
 
     private Date updateDate;
 
     private Integer status;
-
 
 }
