@@ -1,4 +1,4 @@
-package com.zedata.project.config;
+package com.zedata.project.config.redis;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +19,12 @@ import java.time.Duration;
 
 /**
  * Jedis配置类
+ *
+ * @author Mr-Glacier
+ * @since 2025/01/21 15:05
  */
 @Configuration
 public class JedisConfig {
-
     private static final Logger logger = LoggerFactory.getLogger(JedisConfig.class);
     private static final String REDIS_PREFIX = "spring.redis";
 

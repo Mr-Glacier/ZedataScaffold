@@ -1,4 +1,4 @@
-package com.zedata.project.controller;
+package com.zedata.project.controller.system;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;

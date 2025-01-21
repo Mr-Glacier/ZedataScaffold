@@ -1,20 +1,16 @@
-package com.zedata.project.controller;
+package com.zedata.project.controller.system;
 
 import com.zedata.project.common.result.Result;
 import com.zedata.project.config.security.JwtTokenUtil;
 import com.zedata.project.entity.po.SysUser;
 import com.zedata.project.service.SysUserService;
 import com.zedata.project.service.basicServices.AuthUserService;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Mr-Glacier
@@ -28,15 +24,13 @@ public class OauthController {
 
     private final SysUserService sysUserService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
 
     private final AuthUserService authUserService;
 
-    public OauthController(SysUserService sysUserService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, AuthUserService authUserService) {
+    public OauthController(SysUserService sysUserService, PasswordEncoder passwordEncoder, JwtTokenUtil jwtTokenUtil, AuthUserService authUserService) {
         this.sysUserService = sysUserService;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authUserService = authUserService;
     }
