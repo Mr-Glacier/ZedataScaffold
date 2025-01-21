@@ -1,15 +1,19 @@
 package com.zedata.project.controller;
 
 import com.zedata.project.common.result.Result;
+import com.zedata.project.config.security.JwtTokenUtil;
 import com.zedata.project.entity.po.SysUser;
 import com.zedata.project.service.SysUserService;
+import com.zedata.project.service.basicServices.AuthUserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,11 +29,16 @@ public class OauthController {
     private final SysUserService sysUserService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public OauthController(SysUserService sysUserService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder1, AuthenticationManager authenticationManager1) {
+    private final AuthUserService authUserService;
+
+    public OauthController(SysUserService sysUserService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, AuthUserService authUserService) {
         this.sysUserService = sysUserService;
-        this.passwordEncoder = passwordEncoder1;
-        this.authenticationManager = authenticationManager1;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.authUserService = authUserService;
     }
 
     /**
@@ -39,23 +48,27 @@ public class OauthController {
     public Result login(@RequestParam(name = "account") String account,
                         @RequestParam(name = "userPassword") String password) {
         try {
-            if (account == null || password == null) {
-                return Result.failed("账户密码不可为空");
+            SysUser currentUser = sysUserService.getUserByAccount(account);
+            if (currentUser == null) {
+                return Result.failed("用户不存在");
             }
-
-            // 创建认证令牌
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(account, password);
-
-            // 执行认证
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-            // 设置认证到安全上下文
+            // 调用方法加载用户
+            UserDetails userDetails = authUserService.loadUserByUsername(account);
+            // 密码校验
+            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+                return Result.failed("密码错误");
+            }
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            String token = jwtTokenUtil.generateToken(userDetails);
 
-            return Result.success(authentication);
+            return Result.success(token);
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            // 认证失败处理
+            return Result.failed("账户或密码错误");
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failed("登录失败");
+            return Result.failed("系统错误，请稍后再试");
         }
     }
 
@@ -67,8 +80,8 @@ public class OauthController {
      */
     @PostMapping("/register")
     @ResponseBody
-    public Result register(@RequestParam("account") String account, @RequestParam("userName") String userName,
-                           @RequestParam("userPassword") String userPassword) {
+    public Result<Object> register(@RequestParam("account") String account, @RequestParam("userName") String userName,
+                                   @RequestParam("userPassword") String userPassword) {
         try {
             // 对三个参数进行校验
             if (account == null || userName == null || userPassword == null) {

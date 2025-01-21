@@ -37,10 +37,10 @@ public class AuthUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String account) throws UsernameNotFoundException {
         SysUser user = sysUserService.getUserByAccount(account);
-
-        if (user == null) {
+        if (null == user) {
             throw new UsernameNotFoundException("用户不存在");
         }
+
         List<SysRoles> rolesList = sysRolesService.getRoles();
         Map<Integer, String> rolesMap = rolesList.stream().collect(Collectors.toMap(SysRoles::getId, SysRoles::getRoleName));
         // 解析用户的角色列表
