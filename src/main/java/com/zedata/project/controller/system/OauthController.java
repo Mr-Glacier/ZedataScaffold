@@ -102,4 +102,17 @@ public class OauthController {
         }
     }
 
+    /**
+     * 刷新token
+     *
+     * @param token
+     */
+    @GetMapping("/refreshToken")
+    public Result<String> refreshToken(@RequestParam("token") String token) {
+        if (jwtTokenUtil.canRefresh(token)) {
+            return Result.success(jwtTokenUtil.refreshToken(token));
+        }else {
+            return Result.failed("token已失效");
+        }
+    }
 }
