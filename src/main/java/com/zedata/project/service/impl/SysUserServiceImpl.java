@@ -1,6 +1,8 @@
 package com.zedata.project.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.injector.methods.Update;
 import com.zedata.project.entity.po.SysUser;
 import com.zedata.project.mapper.SysUserMapper;
 import com.zedata.project.service.SysUserService;
@@ -51,6 +53,29 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             return true;
         } catch (Exception e) {
             throw new RuntimeException("注册失败" + e.getMessage());
+        }
+    }
+
+    /**
+     * 删除用户
+     *
+     * @param account
+     * @return
+     */
+    @Override
+    public boolean deleteUser(String account) {
+        try {
+            UpdateWrapper<SysUser> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("account", account);
+            updateWrapper.set("status", 2);
+            int rowsAffected = sysUserMapper.update(null, updateWrapper);
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("删除失败" + e.getMessage());
         }
     }
 }

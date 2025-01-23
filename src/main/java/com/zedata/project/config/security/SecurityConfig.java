@@ -55,8 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/**",
                         "/v2/api-docs/**"
                 ).permitAll()
-                // 对登录注册要允许匿名访问
-                .antMatchers("/oauth/login", "/oauth/register").permitAll()
+                // 对于 oauth 认证模块 无需权限校验
+                .antMatchers("/oauth/**").permitAll()
+                // 对于验证码模块不需要权限校验
+                .antMatchers("/api/captcha/**").permitAll()
+                // admin 请求下需要ADMIN权限
                 .antMatchers("/api/admin/**").hasAuthority("ADMIN")
                 //跨域请求会先进行一次options预检请求
                 .antMatchers(HttpMethod.OPTIONS)

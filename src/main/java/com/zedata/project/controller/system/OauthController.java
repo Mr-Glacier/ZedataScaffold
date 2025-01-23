@@ -61,6 +61,9 @@ public class OauthController {
             if (currentUser.getStatus() == 0) {
                 return Result.failed("用户已被封禁");
             }
+            if (currentUser.getStatus() == 2) {
+                return Result.failed("用户已被删除,请联系管理员!");
+            }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtTokenUtil.generateToken(userDetails);
@@ -113,8 +116,6 @@ public class OauthController {
 
     /**
      * 刷新token
-     *
-     * @param token
      */
     @ApiOperation("刷新认证")
     @GetMapping("/refreshToken")
