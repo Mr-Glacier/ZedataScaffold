@@ -5,6 +5,8 @@ import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.lang.UUID;
 import com.zedata.project.common.result.Result;
 import com.zedata.project.service.basicServices.RedisService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,7 @@ import java.util.Map;
  * @since 2025/1/20 1:33
  */
 @RestController
+@Api(tags = "验证码模块")
 @RequestMapping("/api/captcha")
 public class CaptchaController {
 
@@ -37,6 +40,7 @@ public class CaptchaController {
     /**
      * @apiNote 获取验证码
      */
+    @ApiOperation("获取验证码")
     @GetMapping("/getCaptcha")
     public Result getCaptcha(HttpServletResponse response) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -62,7 +66,21 @@ public class CaptchaController {
 
             return Result.success(map);
         } catch (Exception e) {
-            return Result.failed("验证码获取失败"+e.getMessage());
+            return Result.failed("验证码获取失败" + e.getMessage());
+        }
+    }
+
+    @ApiOperation("验证验证码")
+    @GetMapping("/checkCaptcha")
+    public Result checkCaptcha(String captchaId, String captcha) {
+        String code = redisService.get(captchaId);
+        if (code == null) {
+            return Result.failed("验证码已过期");
+        }
+        if (code.equals(captcha)) {
+            return Result.success("校验成功");
+        } else {
+            return Result.failed("验证码错误");
         }
     }
 
