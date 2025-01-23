@@ -70,7 +70,7 @@ public class CaptchaController {
         }
     }
 
-    @ApiOperation("验证验证码")
+    @ApiOperation("验证码校验")
     @GetMapping("/checkCaptcha")
     public Result checkCaptcha(String captchaId, String captcha) {
         String code = redisService.get(captchaId);
@@ -78,6 +78,7 @@ public class CaptchaController {
             return Result.failed("验证码已过期");
         }
         if (code.equals(captcha)) {
+            redisService.delete(captchaId);
             return Result.success("校验成功");
         } else {
             return Result.failed("验证码错误");

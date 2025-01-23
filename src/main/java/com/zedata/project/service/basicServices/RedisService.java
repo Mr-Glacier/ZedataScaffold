@@ -42,4 +42,17 @@ public class RedisService {
             return jedis.get(key);
         }
     }
+
+    /**
+     * <p>
+     * 删除key
+     * </p>
+     *
+     * @param key
+     */
+    public void delete(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.del(key);
+        }
+    }
 }
