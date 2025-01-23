@@ -58,6 +58,16 @@ my-jwt:
   expirationTime: 8640000 # 10days
 ```
 #### 3.配置代码
+##### 核心的类一共是5个  #####
+**SecurityConfig** :  
+    1.用于配置需要拦截的url路径、jwt过滤器及出异常后的处理器  
+    2.配置一些认证的过滤器链  
+    3.提供密码加密方式   
+**AuthUserService** :  用于根据用户名获取用户信息,实现了UserDetailsService接口,自定义实现了 loadUserByUsername 方法  
+**JwtTokenUtil** : 用于生成和解析JWT token的工具类  
+**JwtAuthenticationFilter** :  在用户名和密码校验前添加的过滤器，如果有jwt的token，会自行根据token信息进行登录。
+**RestAuthenticationEntryPoint** :  用于处理未登录或token失效时返回401异常
+**RestfulAccessDeniedHandler** :  用于处理匿名用户访问无权限资源时返回403异常
 
 ## 增加 验证码 captcha 服务
 
