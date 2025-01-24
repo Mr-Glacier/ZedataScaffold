@@ -64,7 +64,6 @@ public class AesEncryption {
         AesEncryption aesEncryption = new AesEncryption();
         String newKey = aesEncryption.createAesKey();
         System.out.println(newKey);
-
     }
 
 }

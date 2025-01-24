@@ -18,14 +18,29 @@ import java.time.Duration;
  */
 
 /**
- * Jedis配置类
+ * Jedis配置类(单个实例配置)
+ * 配置文件形式:
+ *spring:
+ *   redis:
+ *     host: 127.0.0.1  # Redis服务器的主机地址
+ *     port: 6379            # Redis服务器的端口
+ *     password: *********** # Redis服务器的密码（如果需要）
+ *     database: 4           # 使用的Redis数据库索引，默认是0
+ *     # 配置 redis 连接池配置
+ *     jedis:
+ *       pool:
+ *         max-active: 8     # 最大活跃连接数，默认值为8
+ *         max-idle: 8       # 最大空闲连接数，默认值为8
+ *         min-idle: 0       # 最小空闲连接数，默认值为0
+ *         max-wait: 1000    # 当没有可用连接时，最大等待时间（毫秒），默认值为-1，即无限期等待
  *
  * @author Mr-Glacier
  * @since 2025/01/21 15:05
  */
 @Configuration
-public class JedisConfig {
-    private static final Logger logger = LoggerFactory.getLogger(JedisConfig.class);
+public class RedisConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);
     private static final String REDIS_PREFIX = "spring.redis";
 
     private final String host;
@@ -37,7 +52,7 @@ public class JedisConfig {
     private final int minIdle;
     private final long maxWait;
 
-    public JedisConfig(
+    public RedisConfig(
             @Value("${" + REDIS_PREFIX + ".host}") String host,
             @Value("${" + REDIS_PREFIX + ".port:6379}") int port, // 提供默认端口
             @Value("${" + REDIS_PREFIX + ".password:}") String password, // 空字符串作为默认值
